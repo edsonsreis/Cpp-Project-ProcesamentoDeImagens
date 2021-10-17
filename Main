@@ -1,0 +1,645 @@
+#include <iostream>
+#include <fstream>
+#include <cstdlib>
+#include <cstring>
+#include <cmath>
+
+#define STRMAX 50
+
+using namespace std;
+
+struct Img{
+    int nl;
+    int nc;
+    int pixel;
+    int R[512][512];
+    int G[512][512];
+    int B[512][512];
+
+};
+
+void conferir_e_abrir(char nome[],Img& img);
+void conferir_e_salvar(char nome[],Img img);
+void corta_rgb(Img img_in, Img& img_out, int li, int ci, int lf, int cf);
+void rotacionar_horario(Img img_in, Img& img_out);
+void rotacionar_antihorario(Img img_in, Img& img_out);
+void equaliza_histograma(Img img_in, Img& img_out);
+void diminui_tamanho(Img img_in, Img& img_out);
+void converte_para_cinza(Img img_in, Img& img_out);
+void binariza(Img img_in, Img& img_out, int limiar);
+void inverte_horizontalmente(Img img_in, Img& img_out);
+void inverte_verticalmente(Img img_in, Img& img_out);
+void reflete_horizontalmente(Img img_in, Img& img_out);
+void reflete_verticalmente(Img img_in, Img& img_out);
+void borra_imagem_fixo(Img img_in, Img& img_out);
+void borra_imagem_variavel(Img img_in, Img& img_out, int x);
+
+
+
+
+int main(){
+    int n;
+    Img img,img2;
+    char nome[STRMAX],nome2[STRMAX];
+    cout<<"Digite a imagem a ser aberta :"<<endl;
+    cin.getline(nome,STRMAX);
+    conferir_e_abrir(nome,img);
+    n=100;
+    while(n!=0){
+        cout<<" Escolha a funcao a ser implementada :"<<endl<<endl;
+        cout<<"  1 - Recortar a Imagem(crop)"<<endl;
+        cout<<"  2 - Rotacionar Imagem em 90graus horario"<<endl;
+        cout<<"  3 - Rotacionar Imagem em 90graus anti-horario"<<endl;
+        cout<<"  4 - Equalizacao de Histograma"<<endl;
+        cout<<"  5 - Diminuir Tamanho"<<endl;
+        cout<<"  6 - Converter Para Cinza"<<endl;
+        cout<<"  7 - Binarizar"<<endl;
+        cout<<"  8 - Iverter Horizontalmente"<<endl;
+        cout<<"  9 - Inverter Verticalmente"<<endl;
+        cout<<" 10 - Refletir Horizontalmente"<<endl;
+        cout<<" 11 - Refletir Verticalmente"<<endl;
+        cout<<" 12 - Borrar imagem(Fixo)"<<endl;
+        cout<<" 13 - Borrar imagem(variavel)"<<endl;
+        cout<<"  0 - Para sair"<<endl;
+        cin>>n;
+        switch(n){
+            int li,ci,lf,cf,limiar;
+        case 1:
+            cout<<"A imagem possui um total de "<<img.nl<<" linhas e "<<img.nc<<" colunas"<<endl;
+            cout<<"Digite a linha inicial a ser cortada"<<endl;
+            cin>>li;
+            cout<<"Digite a coluna inicial a ser cortada"<<endl;
+            cin>>ci;
+            cout<<"Digite a linha final a ser cortada"<<endl;
+            cin>>lf;
+            cout<<"Digite a coluna final a ser cortada"<<endl;
+            cin>>cf;
+            corta_rgb(img,img2,li,ci,lf,cf);
+            cin.ignore();
+            cout<<"Digite o nome do arquivo que deseja salvar :"<<endl;
+            cin.getline(nome2,STRMAX);
+            conferir_e_salvar(nome2,img2);
+            cout<<endl;
+            break;
+
+        case 2:
+            rotacionar_horario(img,img2);
+            cin.ignore();
+            cout<<"Digite o nome do arquivo que deseja salvar :"<<endl;
+            cin.getline(nome2,STRMAX);
+            conferir_e_salvar(nome2,img2);
+            cout<<endl;
+            break;
+
+        case 3:
+            rotacionar_antihorario(img,img2);
+            cin.ignore();
+            cout<<"Digite o nome do arquivo que deseja salvar :"<<endl;
+            cin.getline(nome2,STRMAX);
+            conferir_e_salvar(nome2,img2);
+            cout<<endl;
+            break;
+
+        case 4:
+            equaliza_histograma(img,img2);
+            cin.ignore();
+            cout<<"Digite o nome do arquivo que deseja salvar :"<<endl;
+            cin.getline(nome2,STRMAX);
+            conferir_e_salvar(nome2,img2);
+            cout<<endl;
+            break;
+
+        case 5:
+            diminui_tamanho(img,img2);
+            cin.ignore();
+            cout<<"Digite o nome do arquivo que deseja salvar :"<<endl;
+            cin.getline(nome2,STRMAX);
+            conferir_e_salvar(nome2,img2);
+            cout<<endl;
+            break;
+
+        case 6:
+            converte_para_cinza(img,img2);
+            cin.ignore();
+            cout<<"Digite o nome do arquivo que deseja salvar :"<<endl;
+            cin.getline(nome2,STRMAX);
+            conferir_e_salvar(nome2,img2);
+            cout<<endl;
+            break;
+
+        case 7:
+            cout<<"Digite o limiar a ser usado :"<<endl;
+            cin>>limiar;
+            binariza(img,img2,limiar);
+            cin.ignore();
+            cout<<"Digite o nome do arquivo que deseja salvar :"<<endl;
+            cin.getline(nome2,STRMAX);
+            conferir_e_salvar(nome2,img2);
+            cout<<endl;
+            break;
+
+        case 8:
+
+            inverte_horizontalmente(img, img2);
+            cin.ignore();
+            cout<<"Digite o nome do arquivo que deseja salvar :"<<endl;
+            cin.getline(nome2,STRMAX);
+            conferir_e_salvar(nome2,img2);
+            cout<<endl;
+            break;
+
+
+
+        case 9:
+
+
+            inverte_verticalmente(img, img2);
+            cin.ignore();
+            cout<<"Digite o nome do arquivo que deseja salvar :"<<endl;
+            cin.getline(nome2,STRMAX);
+            conferir_e_salvar(nome2,img2);
+            cout<<endl;
+            break;
+
+        case 10:
+
+            reflete_horizontalmente(img, img2);
+            cin.ignore();
+            cout<<"Digite o nome do arquivo que deseja salvar :"<<endl;
+            cin.getline(nome2,STRMAX);
+            conferir_e_salvar(nome2,img2);
+            cout<<endl;
+            break;
+
+        case 11:
+
+            reflete_verticalmente(img, img2);
+            cin.ignore();
+            cout<<"Digite o nome do arquivo que deseja salvar :"<<endl;
+            cin.getline(nome2,STRMAX);
+            conferir_e_salvar(nome2,img2);
+            cout<<endl;
+            break;
+        case 12:
+
+            borra_imagem_fixo(img, img2);
+            cin.ignore();
+            cout<<"Digite o nome do arquivo que deseja salvar :"<<endl;
+            cin.getline(nome2,STRMAX);
+            conferir_e_salvar(nome2,img2);
+            cout<<endl;
+            break;
+
+       case 13:
+            int x;
+
+            cout<<"Digite o tamanho do filtro(numero deve ser impar):"<<endl;
+            cin>>x;
+
+            while(x%2==0){
+            cout<<"Tamanho nao eh impar. Digite novamente:"<<endl;
+            cin>>x;
+            }
+
+            borra_imagem_variavel(img, img2,x);
+            cin.ignore();
+            cout<<"Digite o nome do arquivo que deseja salvar :"<<endl;
+            cin.getline(nome2,STRMAX);
+            conferir_e_salvar(nome2,img2);
+            cout<<endl;
+
+
+            break;
+
+        case 0:
+            n=0;
+            exit(0);
+
+
+
+        }
+    }
+    return 0;
+
+}
+
+void conferir_e_abrir(char nome[],Img& img){
+    char tipo[3]= {'P','3','\0'};
+    char tipo2[3];
+    fstream imagem;
+    imagem.open(nome);
+    if(!imagem.is_open()){
+        cout<<"O arquivo nao abriu ou nao foi encontrado ! "<<endl;
+        exit(0);
+    }
+    cout<<"O arquivo foi encontrado e aberto! "<<endl<<endl;
+    cout<<"Lendo arquivo... "<<endl<<endl;
+    imagem>>tipo2;
+    cout<<"Formato aceito : "<<tipo<<endl;
+    cout<<"Formato do arquivo : "<<tipo2<<endl<<endl;
+
+    if(strcmp(tipo,tipo2)!=0){
+        cout<<"Tipo errado de arquivo , finalizando programa... "<<endl;
+        exit(0);
+
+    }
+    cout<<"Continuando programa... "<<endl<<endl;
+    imagem>>img.nc>>img.nl;
+    if(img.nc>512){
+        cout<<"A largura do arquivo é grande de mais para ser aberta, encerrando programa..."<<endl;
+        if(img.nl>512){
+            cout<<"A altura do arquivo é grande de mais para ser aberta, encerrando programa..."<<endl;
+        }
+        exit(0);
+    }
+    imagem>>img.pixel;
+    if(img.pixel>255){
+        cout<<"O programa nao suporta esse tamanho de pixel" <<endl;
+        exit(0);
+    }
+    for(int i=0; i<img.nl; i++){
+        for(int j=0; j<img.nc; j++){
+            imagem>>img.R[i][j];
+            imagem>>img.G[i][j];
+            imagem>>img.B[i][j];
+        }
+    }
+}
+
+void conferir_e_salvar(char nome[],Img img){
+    ofstream imagem2;
+    char formato[] = {'P','3','\0'};
+    imagem2.open(nome);
+    if(!imagem2.is_open()){
+        cout<<"O arquivo nao foi criado ! "<<endl;
+        exit(0);
+    }
+    cout<<"O arquivo foi criado criado com sucesso ! "<<endl<<endl;
+    imagem2<<formato<<endl;
+    imagem2<<img.nc<<" "<<img.nl<<endl;
+    imagem2<<img.pixel<<endl;
+    for(int i=0; i<img.nl; i++){
+        for(int j=0; j<img.nc; j++){
+            imagem2<<img.R[i][j]<<" ";
+            imagem2<<img.G[i][j]<<" ";
+            imagem2<<img.B[i][j]<<" ";
+        }
+        imagem2<<endl;
+    }
+}
+
+void corta_rgb(Img img_in, Img& img_out, int li, int ci, int lf, int cf){
+    img_out.nc=img_in.nc;
+    img_out.nl=img_in.nl;
+    img_out.pixel=img_in.pixel;
+    for(int i=0; i<=lf; i++){
+        for(int j=0; j<=cf; j++){
+            img_out.R[i][j]=img_in.R[i+li][j+ci];
+            img_out.G[i][j]=img_in.G[i+li][j+ci];
+            img_out.B[i][j]=img_in.B[i+li][j+ci];
+        }
+    }
+
+}
+
+void rotacionar_horario(Img img_in, Img& img_out){
+    img_out.nc=img_in.nl;
+    img_out.nl=img_in.nc;
+    img_out.pixel=img_in.pixel;
+    for(int i=0; i<img_out.nl; i++){
+        for(int j=0; j<img_out.nc; j++){
+            img_out.R[i][j]=img_in.R[img_out.nc-1-j][i];
+            img_out.G[i][j]=img_in.G[img_out.nc-1-j][i];
+            img_out.B[i][j]=img_in.B[img_out.nc-1-j][i];
+
+        }
+    }
+}
+
+void rotacionar_antihorario(Img img_in, Img& img_out){
+    img_out.nc=img_in.nl;
+    img_out.nl=img_in.nc;
+    img_out.pixel=img_in.pixel;
+    for(int i=0; i<img_out.nl; i++){
+        for(int j=0; j<img_out.nc; j++){
+            img_out.R[i][j]=img_in.R[j][img_out.nl-1-i];
+            img_out.G[i][j]=img_in.G[j][img_out.nl-1-i];
+            img_out.B[i][j]=img_in.B[j][img_out.nl-1-i];
+        }
+    }
+}
+
+void equaliza_histograma(Img img_in, Img& img_out){
+    img_out.nc=img_in.nc;
+    img_out.nl=img_in.nl;
+    img_out.pixel=img_in.pixel;
+    int i,j,k;
+    int vR[256]= {},vG[256]= {},vB[256]= {},vaR[256]= {},vaG[256]= {},vaB[256]= {};
+    for(k=0; k<=img_in.pixel; k++){
+        for(i=0; i<img_in.nl; i++){
+            for(j=0; j<img_in.nc; j++){
+                if(img_in.R[i][j]==k){
+                    vR[k]++;
+                }
+                if(img_in.G[i][j]==k){
+                    vG[k]++;
+                }
+                if(img_in.B[i][j]==k){
+                    vB[k]++;
+
+                }
+
+            }
+
+        }
+
+    }
+    int aux=0,aux2=0,aux3=0;
+    for(i=0; i<=img_in.pixel; i++){
+        aux+=vR[i];
+        vaR[i]=aux;
+        aux2+=vG[i];
+        vaG[i]=aux2;
+        aux3+=vB[i];
+        vaB[i]=aux3;
+    }
+    for(k=0; k<=img_in.pixel; k++){
+        for(i=0; i<=img_in.nl; i++){
+            for(j=0; j<=img_in.nc; j++){
+                if(img_in.R[i][j]==k){
+                    img_out.R[i][j]=(vaR[k]*img_in.pixel)/(img_in.nc*img_in.nl);
+                }
+                if(img_in.G[i][j]==k){
+                    img_out.G[i][j]=(vaG[k]*img_in.pixel)/(img_in.nc*img_in.nl);
+                }
+                if(img_in.B[i][j]==k){
+                    img_out.B[i][j]=(vaB[k]*img_in.pixel)/(img_in.nc*img_in.nl);
+                }
+            }
+        }
+    }
+}
+
+void diminui_tamanho(Img img_in, Img& img_out){
+    img_out.nc=img_in.nc;
+    img_out.nl=img_in.nl;
+    img_out.pixel=img_in.pixel;
+
+    int a=0;
+    int b=0;
+
+    for(int i=0; i<=img_in.nl; i++){
+        if(i%2==0){
+        for(int j=0; j<=img_in.nc; j++){
+            if(j%2==0){
+                img_out.R[a][b] = img_in.R[i][j];
+                img_out.G[a][b] = img_in.G[i][j];
+                img_out.B[a][b] = img_in.B[i][j];
+                b++;
+            }
+        }
+            a++;
+            b=0;
+
+        }
+    }
+}
+
+
+
+void converte_para_cinza(Img img_in, Img& img_out){
+    img_out.nc=img_in.nc;
+    img_out.nl=img_in.nl;
+    img_out.pixel=img_in.pixel;
+    int media;
+    for(int i=0; i<img_in.nl; i++){
+        for(int j=0; j<img_in.nc; j++){
+        media = (img_in.R[i][j] + img_in.G[i][j] + img_in.B[i][j])/3;
+        img_out.R[i][j] = media;
+        img_out.G[i][j] = media;
+        img_out.B[i][j] = media;
+        }
+    }
+}
+
+void binariza(Img img_in, Img& img_out, int limiar){
+    img_out.nc=img_in.nc;
+    img_out.nl=img_in.nl;
+    img_out.pixel=img_in.pixel;
+    int media;
+    for(int i=0;i<img_in.nl;i++){
+       for(int j=0;j<img_in.nc;j++){
+          media=(img_in.R[i][j] + img_in.G[i][j] + img_in.B[i][j])/3;
+          if(media<limiar){
+               img_out.R[i][j]=0;
+               img_out.G[i][j]=0;
+               img_out.B[i][j]=0;
+
+          }else{
+               img_out.R[i][j]=255;
+               img_out.G[i][j]=255;
+               img_out.B[i][j]=255;
+          }
+       }
+    }
+}
+
+
+
+void inverte_horizontalmente(Img img_in, Img& img_out){
+
+    img_out.nc=img_in.nc;
+    img_out.nl=img_in.nl;
+    img_out.pixel=img_in.pixel;
+    int b = img_in.nc;
+
+    for(int i=0; i<=img_in.nl; i++){
+        for(int j=0; j<=img_in.nc; j++){
+
+            img_out.R[i][b] = img_in.R[i][j];
+            img_out.G[i][b] = img_in.G[i][j];
+            img_out.B[i][b] = img_in.B[i][j];
+        b--;
+        }
+
+        b=img_in.nc;
+
+    }
+}
+
+
+
+
+void inverte_verticalmente(Img img_in, Img& img_out){
+
+    img_out.nc=img_in.nc;
+    img_out.nl=img_in.nl;
+    img_out.pixel=img_in.pixel;
+    int a = img_in.nl;
+    int b = img_in.nc;
+
+    for(int i=0; i<=img_in.nl; i++){
+        for(int j=0; j<=img_in.nc; j++){
+
+            img_out.R[a][b] = img_in.R[i][j];
+            img_out.G[a][b] = img_in.G[i][j];
+            img_out.B[a][b] = img_in.B[i][j];
+        b--;
+        }
+        a--;
+        b=img_in.nc;
+
+    }
+}
+
+
+
+
+void reflete_horizontalmente(Img img_in, Img& img_out){
+
+
+    img_out.nc=img_in.nc;
+    img_out.nl=img_in.nl;
+    img_out.pixel=img_in.pixel;
+    int b = img_in.nc;
+    int i=0,j=0;
+
+
+    for( i=0; i<=img_in.nl; i++){
+        for( j=0; j<=img_in.nc/2; j++){
+
+            img_out.R[i][j] = img_in.R[i][b];
+            img_out.G[i][j] = img_in.G[i][b];
+            img_out.B[i][j] = img_in.B[i][b];
+        b--;
+        }
+
+        b=img_in.nc;
+
+    }
+
+
+    for( i=0; i<=img_in.nl; i++){
+        for( j=img_in.nc/2; j<=img_in.nc; j++){
+
+            img_out.R[i][j] = img_in.R[i][j];
+            img_out.G[i][j] = img_in.G[i][j];
+            img_out.B[i][j] = img_in.B[i][j];
+        }
+    }
+}
+
+
+void reflete_verticalmente(Img img_in, Img& img_out){
+
+
+    img_out.nc=img_in.nc;
+    img_out.nl=img_in.nl;
+    img_out.pixel=img_in.pixel;
+    int a = img_in.nl/2;
+    int b = 0;
+
+    for(int i=img_in.nl/2; i<=img_in.nl; i++){
+        for(int j=0; j<=img_in.nc; j++){
+
+            img_out.R[a][b] = img_in.R[i][j];
+            img_out.G[a][b] = img_in.G[i][j];
+            img_out.B[a][b] = img_in.B[i][j];
+        b++;
+        }
+        a++;
+        b=0;
+
+    }
+
+    a=0;
+    b=0;
+
+    for(int i = img_in.nl; i>=img_in.nl/2; i--){
+        for(int j=0; j<=img_in.nc; j++){
+            img_out.R[a][b] = img_in.R[i][j];
+            img_out.G[a][b] = img_in.G[i][j];
+            img_out.B[a][b] = img_in.B[i][j];
+        b++;
+        }
+        a++;
+        b=0;
+        }
+
+    }
+
+
+void borra_imagem_fixo(Img img_in, Img& img_out){
+
+
+    img_out.nc=img_in.nc;
+    img_out.nl=img_in.nl;
+    img_out.pixel=img_in.pixel;
+
+
+    for(int i=0; i<=img_in.nl; i++){
+        for(int j=0; j<=img_in.nc; j++){
+                for(int p=0; p<=2; p++){
+                    for(int q=0; q<=2; q++){
+                            if(i+p-1<0 || j+q-1<0){
+
+                        img_out.R[i][j] = img_out.R[i][j]+0;
+                        img_out.G[i][j] = img_out.G[i][j]+0;
+                        img_out.B[i][j] = img_out.B[i][j]+0;
+                        }else{
+                        img_out.R[i][j] = img_out.R[i][j] + (img_in.R[i+p-1][j+q-1]);
+                        img_out.G[i][j] = img_out.G[i][j] + (img_in.G[i+p-1][j+q-1]);
+                        img_out.B[i][j] = img_out.B[i][j] + (img_in.B[i+p-1][j+q-1]);
+                    }}
+                }
+        }
+    }
+
+    for(int i=0; i<=img_in.nl; i++){
+        for(int j=0; j<=img_in.nc; j++){
+                img_out.R[i][j] = img_out.R[i][j]/9;
+                img_out.G[i][j] = img_out.G[i][j]/9;
+                img_out.B[i][j] = img_out.B[i][j]/9;
+        }
+    }
+}
+
+
+
+void borra_imagem_variavel(Img img_in, Img& img_out, int x){
+
+
+    img_out.nc=img_in.nc;
+    img_out.nl=img_in.nl;
+    img_out.pixel=img_in.pixel;
+
+
+    for(int i=0; i<=img_in.nl; i++){
+        for(int j=0; j<=img_in.nc; j++){
+                for(int p=0; p<x; p++){
+                    for(int q=0; q<x; q++){
+                            if(i+p-1<0 || j+q-1<0){
+
+                        img_out.R[i][j] = img_out.R[i][j]+0;
+                        img_out.G[i][j] = img_out.G[i][j]+0;
+                        img_out.B[i][j] = img_out.B[i][j]+0;
+                        }else{
+                        img_out.R[i][j] = img_out.R[i][j] + (img_in.R[i+p-1][j+q-1]);
+                        img_out.G[i][j] = img_out.G[i][j] + (img_in.G[i+p-1][j+q-1]);
+                        img_out.B[i][j] = img_out.B[i][j] + (img_in.B[i+p-1][j+q-1]);
+                    }}
+                }
+        }
+    }
+
+    for(int i=0; i<=img_in.nl; i++){
+        for(int j=0; j<=img_in.nc; j++){
+                img_out.R[i][j] = img_out.R[i][j]/pow(x,2);
+                img_out.G[i][j] = img_out.G[i][j]/pow(x,2);
+                img_out.B[i][j] = img_out.B[i][j]/pow(x,2);
+        }
+    }
+}
+
+
+
